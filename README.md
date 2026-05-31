@@ -1,2 +1,1 @@
-# Hastus
-Hastus Scraoer
+# Hastus Scraper
