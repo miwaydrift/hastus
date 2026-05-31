@@ -3,84 +3,393 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HASTUS Scraper By Grujinder Singh</title>
+<title>HASTUS Tools by Gurjinder Singh</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=DM+Sans:wght@400;600;700&display=swap');
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'DM Sans', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
-  .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; max-width: 520px; width: 100%; text-align: center; }
-  h1 { font-family: 'JetBrains Mono', monospace; font-size: 22px; margin-bottom: 6px; color: #fff; }
-  .sub { color: #94a3b8; font-size: 13px; margin-bottom: 24px; }
-  .steps { text-align: left; background: #0f172a; border-radius: 10px; padding: 16px 20px; margin-bottom: 24px; font-size: 13px; line-height: 2; color: #cbd5e1; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; max-width: 580px; width: 100%; text-align: center; }
+  h1 { font-family: 'JetBrains Mono', monospace; font-size: 22px; margin-bottom: 4px; color: #fff; }
+  .byline { color: #38bdf8; font-size: 12px; font-weight: 600; margin-bottom: 20px; letter-spacing: 0.04em; }
+
+  /* Mode tabs */
+  .mode-tabs { display: flex; background: #0f172a; border-radius: 10px; padding: 4px; margin-bottom: 24px; gap: 4px; }
+  .mode-tab { flex: 1; padding: 9px 6px; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; color: #64748b; background: transparent; line-height: 1.3; }
+  .mode-tab.active { background: #1e293b; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+  .mode-tab.active.download-tab { color: #38bdf8; }
+  .mode-tab.active.clipboard-tab { color: #a78bfa; }
+  .mode-tab.active.tamper-tab { color: #fb923c; }
+
+  /* Mode panels */
+  .mode-panel { display: none; }
+  .mode-panel.active { display: block; }
+
+  .steps { text-align: left; background: #0f172a; border-radius: 10px; padding: 16px 20px; margin-bottom: 20px; font-size: 13px; line-height: 2.1; color: #cbd5e1; }
   .steps b { color: #38bdf8; }
-  .big-btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-  .big-btn.copy { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: #fff; margin-bottom: 10px; }
-  .big-btn.copy:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59,130,246,0.4); }
-  .big-btn.copy:active { transform: scale(0.98); }
-  .big-btn.copy.done { background: linear-gradient(135deg, #16a34a, #15803d); }
-  .big-btn.bm { background: #334155; color: #94a3b8; font-size: 13px; padding: 12px; }
-  .big-btn.bm:hover { background: #475569; color: #fff; }
-  .toast { position: fixed; bottom: 30px; background: #16a34a; color: #fff; padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(10px); transition: all 0.3s; pointer-events: none; }
-  .toast.show { opacity: 1; transform: translateY(0); }
-  .code-box { background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; margin-top: 16px; max-height: 120px; overflow-y: auto; text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #64748b; line-height: 1.6; word-break: break-all; display: none; }
-  .toggle-code { color: #64748b; font-size: 11px; cursor: pointer; margin-top: 12px; }
-  .toggle-code:hover { color: #94a3b8; }
-  .divider { height: 1px; background: #334155; margin: 20px 0; }
-  .info { color: #64748b; font-size: 11px; margin-top: 16px; line-height: 1.6; }
+  .steps.purple b { color: #a78bfa; }
+  .steps.orange b { color: #fb923c; }
+
+  .big-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; }
+  .big-btn.blue  { background: linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; }
+  .big-btn.blue:hover  { transform:translateY(-2px); box-shadow:0 8px 24px rgba(59,130,246,.4); }
+  .big-btn.purple{ background: linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff; }
+  .big-btn.purple:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(124,58,237,.4); }
+  .big-btn.orange{ background: linear-gradient(135deg,#ea580c,#c2410c); color:#fff; }
+  .big-btn.orange:hover{ transform:translateY(-2px); box-shadow:0 8px 24px rgba(234,88,12,.4); }
+  .big-btn:active { transform:scale(0.98) !important; }
+  .big-btn.done  { background: linear-gradient(135deg,#16a34a,#15803d) !important; }
+
+  .badge { display:inline-block; font-size:10px; font-weight:700; padding:2px 7px; border-radius:99px; margin-left:6px; vertical-align:middle; }
+  .badge.new { background:#7c3aed; color:#fff; }
+  .badge.tm  { background:#ea580c; color:#fff; }
+
+  .toast { position:fixed; bottom:30px; background:#16a34a; color:#fff; padding:12px 24px; border-radius:10px; font-weight:600; font-size:14px; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; z-index:9999; }
+  .toast.show { opacity:1; transform:translateY(0); }
+
+  .code-box { background:#0f172a; border:1px solid #334155; border-radius:8px; padding:12px; margin-top:14px; max-height:120px; overflow-y:auto; text-align:left; font-family:'JetBrains Mono',monospace; font-size:10px; color:#64748b; line-height:1.6; word-break:break-all; display:none; }
+  .toggle-code { color:#64748b; font-size:11px; cursor:pointer; margin-top:10px; display:inline-block; }
+  .toggle-code:hover { color:#94a3b8; }
+
+  .info { color:#64748b; font-size:11px; margin-top:14px; line-height:1.7; }
+
+  /* paste-back result box (clipboard mode) */
+  .result-box { display:none; margin-top:14px; background:#0f172a; border:1px solid #4c1d95; border-radius:10px; padding:14px 16px; text-align:left; }
+  .result-box.show { display:block; }
+  .result-box textarea { width:100%; height:110px; background:transparent; border:none; color:#c4b5fd; font-family:'JetBrains Mono',monospace; font-size:10px; resize:none; outline:none; line-height:1.6; }
+  .result-box .copy-result-btn { margin-top:8px; width:100%; padding:8px; border:1px solid #7c3aed; border-radius:8px; background:transparent; color:#a78bfa; font-size:12px; font-weight:600; font-family:'DM Sans',sans-serif; cursor:pointer; transition:all 0.2s; }
+  .result-box .copy-result-btn:hover { background:#7c3aed; color:#fff; }
+  .result-box .result-label { font-size:11px; color:#7c3aed; font-weight:600; margin-bottom:6px; }
+
+  .divider { height:1px; background:#334155; margin:16px 0; }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <h1>📋 HASTUS Scraper By Gurjinder Singh</h1>
-  <p class="sub">CP Sign-Up · One-Click Extraction</p>
+  <h1>🚌 HASTUS CP Tools</h1>
+  <p class="byline">by Gurjinder Singh</p>
 
-  <div class="steps">
-    <b>1.</b> Open HASTUS "Available work" page in Edge<br>
-    <b>2.</b> Click the button below to copy the scraper<br>
-    <b>3.</b> Press <b>F12</b> → Console tab<br>
-    <b>4.</b> Paste (<b>Ctrl+V</b>) and hit <b>Enter</b><br>
-    <b>5.</b> Wait for green bar → JSON downloads automatically
+  <div class="mode-tabs">
+    <button class="mode-tab download-tab active" onclick="switchMode('download')">⬇️ Download JSON</button>
+    <button class="mode-tab clipboard-tab" onclick="switchMode('clipboard')">📎 Clipboard <span class="badge new">ALT</span></button>
+    <button class="mode-tab tamper-tab" onclick="switchMode('tamper')">🐵 Auto-Select</button>
   </div>
 
-  <button class="big-btn copy" id="copyBtn" onclick="copyScript()">
-    📋 Copy Scraper to Clipboard
-  </button>
+  <!-- ── Tab 1: Download ── -->
+  <div class="mode-panel active" id="panel-download">
+    <div class="steps">
+      <b>1.</b> Open HASTUS "Available work" page in Edge<br>
+      <b>2.</b> Click the button below to copy the scraper<br>
+      <b>3.</b> Press <b>F12</b> → Console tab<br>
+      <b>4.</b> Paste (<b>Ctrl+V</b>) and hit <b>Enter</b><br>
+      <b>5.</b> Wait for green bar → JSON downloads automatically
+    </div>
+    <button class="big-btn blue" id="copyBtn" onclick="copyScript('download')">
+      📋 Copy Scraper to Clipboard
+    </button>
+    <span class="toggle-code" onclick="toggleCode('codeBox1')">▶ Show/hide scraper code</span>
+    <div class="code-box" id="codeBox1"></div>
+    <p class="info">
+      Scraper auto-scrolls through all positions, extracts every field<br>
+      (position, roster, working/paid hrs, eligibility, duty type, day crews, vehicles),<br>
+      then downloads <b>hastus_shifts.json</b> for your CP Sign-Up app.
+    </p>
+  </div>
 
-  <div class="divider"></div>
+  <!-- ── Tab 2: Clipboard ── -->
+  <div class="mode-panel" id="panel-clipboard">
+    <div class="steps purple">
+      <b>1.</b> Open HASTUS "Available work" page in Edge<br>
+      <b>2.</b> Click the button below to copy the scraper<br>
+      <b>3.</b> Press <b>F12</b> → Console tab<br>
+      <b>4.</b> Paste (<b>Ctrl+V</b>) and hit <b>Enter</b><br>
+      <b>5.</b> Green bar appears → <b>come back here</b> and paste the JSON below
+    </div>
+    <button class="big-btn purple" id="copyBtnClip" onclick="copyScript('clipboard')">
+      📎 Copy Clipboard Scraper
+    </button>
+    <div class="result-box" id="resultBox">
+      <div class="result-label">📦 Paste your JSON result here:</div>
+      <textarea id="jsonPasteArea" placeholder="Paste the JSON output from the console here (Ctrl+V)..."></textarea>
+      <button class="copy-result-btn" onclick="copyResultJson()">📋 Copy JSON to clipboard</button>
+    </div>
+    <span class="toggle-code" onclick="toggleCode('codeBox2')">▶ Show/hide scraper code</span>
+    <div class="code-box" id="codeBox2"></div>
+    <p class="info">
+      Use this mode if your browser <b>blocks file downloads</b>.<br>
+      The scraper copies extracted JSON directly to your clipboard instead.
+    </p>
+  </div>
 
-  <p class="toggle-code" onclick="toggleCode()">▶ Show/hide scraper code</p>
-  <div class="code-box" id="codeBox"></div>
-
-  <p class="info">
-    Scraper auto-scrolls through all positions, extracts every field<br>
-    (position, roster, working/paid hrs, eligibility, duty type, day crews, vehicles),<br>
-    then downloads <b>hastus_shifts.json</b> for your CP Sign-Up app.
-  </p>
+  <!-- ── Tab 3: Auto-Select ── -->
+  <div class="mode-panel" id="panel-tamper">
+    <div class="steps orange">
+      <b>1.</b> Open HASTUS "Available work" page in Edge<br>
+      <b>2.</b> Click the button below to copy the script<br>
+      <b>3.</b> Press <b>F12</b> → Console tab<br>
+      <b>4.</b> Paste (<b>Ctrl+V</b>) and hit <b>Enter</b><br>
+      <b>5.</b> A widget appears bottom-right — paste your IDs and hit <b>▶ Start</b>
+    </div>
+    <button class="big-btn orange" id="copyBtnTM" onclick="copyScript('tamper')">
+      🐵 Copy Auto-Select Script
+    </button>
+    <span class="toggle-code" onclick="toggleCode('codeBox3')">▶ Show/hide script code</span>
+    <div class="code-box" id="codeBox3"></div>
+    <p class="info">
+      Paste position IDs (one per line) → clicks every matching shift automatically.<br>
+      Use <b>📋 Copy IDs</b> in the widget to grab all visible IDs from the page.<br>
+      Draggable widget · minimise/close · adjustable delay · debug mode.
+    </p>
+  </div>
 </div>
 
-<div class="toast" id="toast">✅ Copied to clipboard!</div>
+<div class="toast" id="toast"></div>
 
 <script>
-const SCRAPER = `(async function(){var D=250,S=600,M=600;var ov=document.getElementById('hastus-scraper-overlay');if(ov)ov.remove();ov=document.createElement('div');ov.id='hastus-scraper-overlay';ov.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1a56db,#1e40af);color:#fff;padding:14px 24px;font:bold 14px/1.4 -apple-system,sans-serif;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:12px';document.body.appendChild(ov);function st(m,p){var b='';if(p!==undefined)b='<div style=\"width:120px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden\"><div style=\"width:'+p+'%;height:100%;background:#fff;border-radius:3px;transition:width .3s\"></div></div>';ov.innerHTML=m+b;console.log('[Scraper] '+m.replace(/<[^>]+>/g,''))}var lb=document.querySelector('div.ListBody');if(!lb){st('\\u274c Could not find ListBody. Open the Available work section first.');return}var tot=0;document.querySelectorAll('*').forEach(function(h){var m=h.textContent.match(/Available work\\s*\\((\\d+)\\/(\\d+)\\)/);if(m)tot=parseInt(m[2])});st('\\ud83d\\udcdc Scrolling to load all '+(tot||'???')+' positions...');var prev=0,stable=0,att=0;while(att<M){lb.scrollTop+=S;await new Promise(function(r){setTimeout(r,D)});att++;if(att%8===0){var cn=document.querySelectorAll('.AvailableRosterPositionItem').length;var pc=tot?Math.min(99,Math.round(cn/tot*100)):0;st('\\ud83d\\udcdc Loading... <b>'+cn+'</b>'+(tot?' / '+tot:'')+' positions ',pc);if(cn===prev&&cn>0){stable++;if(stable>=4){st('\\u2705 All <b>'+cn+'</b> positions loaded. Extracting...',100);break}}else stable=0;prev=cn}}await new Promise(function(r){setTimeout(r,800)});st('\\u2699\\ufe0f Extracting shift data...');var cards=document.querySelectorAll('.AvailableRosterPositionItem');var shifts=[];var dn=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];for(var ci=0;ci<cards.length;ci++){var card=cards[ci];var position=card.getAttribute('data-position-identifier')||'';var rk='';try{var kd=JSON.parse(card.getAttribute('data-roster-position-key')||'{}');rk=kd.RosterIdentifier||''}catch(e){}var re=card.querySelector('.Position_Key_RosterIdentifier_Cell_Value .WorkType,.Position_Key_RosterIdentifier_Cell_Value');var roster=re?re.textContent.trim():rk;var txt=card.textContent;var wm=txt.match(/Working:\\s*(\\d+h\\d+)/);var pm=txt.match(/Paid:\\s*(\\d+h\\d+)/);var em=txt.match(/Extra:\\s*(Eligible|Not eligible)/i);var qm=txt.match(/Qualif[.:]?\\s*(Yes|No)/i);var dm=txt.match(/Duty\\s*type:\\s*([A-Z][A-Z0-9,\\s]*?)(?=\\s*(?:\\n|Mon|Tue|Holiday|$))/i);var hm=txt.match(/Holidays?\\s*([\\d\\/]+(?:\\s*,\\s*[\\d\\/]+)*)/);var holidays={};if(hm){hm[1].split(/\\s*,\\s*/).forEach(function(p){var x=p.match(/(\\d{2})\\/(\\d{2})/);if(x)holidays['2026'+x[1]+x[2]]=''})}var days={};var dg=card.querySelectorAll('[class*=DayWrapper],[class*=Day_Group],[class*=day]');if(dg.length>=7){for(var i=0;i<Math.min(dg.length,7);i++){var dt=dg[i].textContent.trim();var dy='';for(var j=0;j<dn.length;j++)if(dt.indexOf(dn[j])>-1){dy=dn[j];break}if(!dy&&i<7)dy=dn[i];var cm=dt.match(/\\b(\\d{1,4}|OFF|SR|VR)\\b/i);var cr=cm?cm[1].toUpperCase():'';var io=cr==='OFF';var vm=dt.match(/Vehicle\\s*Type:\\s*(\\d+)/i);if(dy)days[dy]={crew:cr,is_off:io,vehicle:io?'':(vm?vm[1]:'')}}}if(Object.keys(days).length<7){for(var i=0;i<dn.length;i++){if(days[dn[i]])continue;var rx=new RegExp(dn[i]+'\\\\s*\\\\n?\\\\s*(\\\\d{1,4}|OFF|SR|VR)','i');var m=txt.match(rx);if(m){var c=m[1].toUpperCase();var io=c==='OFF';var af=txt.substring(txt.indexOf(m[0])+m[0].length);var vm=af.match(/Vehicle\\s*Type:\\s*(\\d+)/i);days[dn[i]]={crew:c,is_off:io,vehicle:io?'':(vm?vm[1]:'')}}}}if(Object.keys(days).length<7){var spans=card.querySelectorAll('.WorkType,[class*=Cell_Value] span');var cv=[];spans.forEach(function(sp){var t=sp.textContent.trim();if(/^(\\d{1,4}|OFF|SR|VR)$/i.test(t)&&t!==position&&t.length<=4)cv.push(t.toUpperCase())});if(cv.length>=7)for(var i=0;i<7;i++)if(!days[dn[i]]){var c=cv[i];days[dn[i]]={crew:c,is_off:c==='OFF',vehicle:''}}}shifts.push({position:position,roster:roster,working:wm?wm[1]:'',paid:pm?pm[1]:'',duty_type:dm?dm[1].replace(/\\s+/g,'').trim():'',eligible:em?em[1]:'',qualified:qm?qm[1]:'',days:days,holidays:holidays})}st('\\ud83d\\udcca Extracted <b>'+shifts.length+'</b> positions. Downloading...');var json=JSON.stringify(shifts,null,2);var blob=new Blob([json],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hastus_shifts.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);var rosters={};shifts.forEach(function(s){rosters[s.roster]=(rosters[s.roster]||0)+1});ov.style.background='linear-gradient(135deg,#16a34a,#15803d)';ov.innerHTML='\\u2705 <b>'+shifts.length+'</b> positions scraped \\u2192 hastus_shifts.json downloaded! '+Object.entries(rosters).map(function(e){return e[0]+': '+e[1]}).join(' \\u00b7 ')+' <span onclick=\"this.parentElement.remove()\" style=\"cursor:pointer;margin-left:16px;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:6px;font-size:12px\">\\u2715 Close</span>';console.log('[Scraper] Done!',shifts.length);console.table(rosters)})();`;
+// ── Scraper: Download version ────────────────────────────────────────────────
+const SCRAPER_DOWNLOAD = `(async function(){var D=250,S=600,M=600;var ov=document.getElementById('hastus-scraper-overlay');if(ov)ov.remove();ov=document.createElement('div');ov.id='hastus-scraper-overlay';ov.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#1a56db,#1e40af);color:#fff;padding:14px 24px;font:bold 14px/1.4 -apple-system,sans-serif;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:12px';document.body.appendChild(ov);function st(m,p){var b='';if(p!==undefined)b='<div style=\"width:120px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden\"><div style=\"width:'+p+'%;height:100%;background:#fff;border-radius:3px;transition:width .3s\"></div></div>';ov.innerHTML=m+b;console.log('[Scraper] '+m.replace(/<[^>]+>/g,''))}var lb=document.querySelector('div.ListBody');if(!lb){st('\\u274c Could not find ListBody. Open the Available work section first.');return}var tot=0;document.querySelectorAll('*').forEach(function(h){var m=h.textContent.match(/Available work\\s*\\((\\d+)\\/(\\d+)\\)/);if(m)tot=parseInt(m[2])});st('\\ud83d\\udcdc Scrolling to load all '+(tot||'???')+' positions...');var prev=0,stable=0,att=0;while(att<M){lb.scrollTop+=S;await new Promise(function(r){setTimeout(r,D)});att++;if(att%8===0){var cn=document.querySelectorAll('.AvailableRosterPositionItem').length;var pc=tot?Math.min(99,Math.round(cn/tot*100)):0;st('\\ud83d\\udcdc Loading... <b>'+cn+'</b>'+(tot?' / '+tot:'')+' positions ',pc);if(cn===prev&&cn>0){stable++;if(stable>=4){st('\\u2705 All <b>'+cn+'</b> positions loaded. Extracting...',100);break}}else stable=0;prev=cn}}await new Promise(function(r){setTimeout(r,800)});st('\\u2699\\ufe0f Extracting shift data...');var cards=document.querySelectorAll('.AvailableRosterPositionItem');var shifts=[];var dn=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];for(var ci=0;ci<cards.length;ci++){var card=cards[ci];var position=card.getAttribute('data-position-identifier')||'';var rk='';try{var kd=JSON.parse(card.getAttribute('data-roster-position-key')||'{}');rk=kd.RosterIdentifier||''}catch(e){}var re=card.querySelector('.Position_Key_RosterIdentifier_Cell_Value .WorkType,.Position_Key_RosterIdentifier_Cell_Value');var roster=re?re.textContent.trim():rk;var txt=card.textContent;var wm=txt.match(/Working:\\s*(\\d+h\\d+)/);var pm=txt.match(/Paid:\\s*(\\d+h\\d+)/);var em=txt.match(/Extra:\\s*(Eligible|Not eligible)/i);var qm=txt.match(/Qualif[.:]?\\s*(Yes|No)/i);var dm=txt.match(/Duty\\s*type:\\s*([A-Z][A-Z0-9,\\s]*?)(?=\\s*(?:\\n|Mon|Tue|Holiday|$))/i);var hm=txt.match(/Holidays?\\s*([\\d\\/]+(?:\\s*,\\s*[\\d\\/]+)*)/);var holidays={};if(hm){hm[1].split(/\\s*,\\s*/).forEach(function(p){var x=p.match(/(\\d{2})\\/(\\d{2})/);if(x)holidays['2026'+x[1]+x[2]]=''})}var days={};var dg=card.querySelectorAll('[class*=DayWrapper],[class*=Day_Group],[class*=day]');if(dg.length>=7){for(var i=0;i<Math.min(dg.length,7);i++){var dt=dg[i].textContent.trim();var dy='';for(var j=0;j<dn.length;j++)if(dt.indexOf(dn[j])>-1){dy=dn[j];break}if(!dy&&i<7)dy=dn[i];var cm=dt.match(/\\b(\\d{1,4}|OFF|SR|VR)\\b/i);var cr=cm?cm[1].toUpperCase():'';var io=cr==='OFF';var vm=dt.match(/Vehicle\\s*Type:\\s*(\\d+)/i);if(dy)days[dy]={crew:cr,is_off:io,vehicle:io?'':(vm?vm[1]:'')}}}if(Object.keys(days).length<7){for(var i=0;i<dn.length;i++){if(days[dn[i]])continue;var rx=new RegExp(dn[i]+'\\\\s*\\\\n?\\\\s*(\\\\d{1,4}|OFF|SR|VR)','i');var m=txt.match(rx);if(m){var c=m[1].toUpperCase();var io=c==='OFF';var af=txt.substring(txt.indexOf(m[0])+m[0].length);var vm=af.match(/Vehicle\\s*Type:\\s*(\\d+)/i);days[dn[i]]={crew:c,is_off:io,vehicle:io?'':(vm?vm[1]:'')}}}}if(Object.keys(days).length<7){var spans=card.querySelectorAll('.WorkType,[class*=Cell_Value] span');var cv=[];spans.forEach(function(sp){var t=sp.textContent.trim();if(/^(\\d{1,4}|OFF|SR|VR)$/i.test(t)&&t!==position&&t.length<=4)cv.push(t.toUpperCase())});if(cv.length>=7)for(var i=0;i<7;i++)if(!days[dn[i]]){var c=cv[i];days[dn[i]]={crew:c,is_off:c==='OFF',vehicle:''}}}shifts.push({position:position,roster:roster,working:wm?wm[1]:'',paid:pm?pm[1]:'',duty_type:dm?dm[1].replace(/\\s+/g,'').trim():'',eligible:em?em[1]:'',qualified:qm?qm[1]:'',days:days,holidays:holidays})}st('\\ud83d\\udcca Extracted <b>'+shifts.length+'</b> positions. Downloading...');var json=JSON.stringify(shifts,null,2);var blob=new Blob([json],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='hastus_shifts.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);var rosters={};shifts.forEach(function(s){rosters[s.roster]=(rosters[s.roster]||0)+1});ov.style.background='linear-gradient(135deg,#16a34a,#15803d)';ov.innerHTML='\\u2705 <b>'+shifts.length+'</b> positions scraped \\u2192 hastus_shifts.json downloaded! '+Object.entries(rosters).map(function(e){return e[0]+': '+e[1]}).join(' \\u00b7 ')+' <span onclick=\"this.parentElement.remove()\" style=\"cursor:pointer;margin-left:16px;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:6px;font-size:12px\">\\u2715 Close</span>';console.log('[Scraper] Done!',shifts.length);console.table(rosters)})();`;
 
-document.getElementById('codeBox').textContent = SCRAPER;
+// ── Scraper: Clipboard version ───────────────────────────────────────────────
+const SCRAPER_CLIPBOARD = `(async function(){var D=250,S=600,M=600;var ov=document.getElementById('hastus-scraper-overlay');if(ov)ov.remove();ov=document.createElement('div');ov.id='hastus-scraper-overlay';ov.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;padding:14px 24px;font:bold 14px/1.4 -apple-system,sans-serif;text-align:center;box-shadow:0 4px 24px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:12px';document.body.appendChild(ov);function st(m,p){var b='';if(p!==undefined)b='<div style=\"width:120px;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden\"><div style=\"width:'+p+'%;height:100%;background:#fff;border-radius:3px;transition:width .3s\"></div></div>';ov.innerHTML=m+b;console.log('[Scraper] '+m.replace(/<[^>]+>/g,''))}var lb=document.querySelector('div.ListBody');if(!lb){st('\\u274c Could not find ListBody. Open the Available work section first.');return}var tot=0;document.querySelectorAll('*').forEach(function(h){var m=h.textContent.match(/Available work\\s*\\((\\d+)\\/(\\d+)\\)/);if(m)tot=parseInt(m[2])});st('\\ud83d\\udcdc Scrolling to load all '+(tot||'???')+' positions...');var prev=0,stable=0,att=0;while(att<M){lb.scrollTop+=S;await new Promise(function(r){setTimeout(r,D)});att++;if(att%8===0){var cn=document.querySelectorAll('.AvailableRosterPositionItem').length;var pc=tot?Math.min(99,Math.round(cn/tot*100)):0;st('\\ud83d\\udcdc Loading... <b>'+cn+'</b>'+(tot?' / '+tot:'')+' positions ',pc);if(cn===prev&&cn>0){stable++;if(stable>=4){st('\\u2705 All <b>'+cn+'</b> positions loaded. Extracting...',100);break}}else stable=0;prev=cn}}await new Promise(function(r){setTimeout(r,800)});st('\\u2699\\ufe0f Extracting shift data...');var cards=document.querySelectorAll('.AvailableRosterPositionItem');var shifts=[];var dn=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];for(var ci=0;ci<cards.length;ci++){var card=cards[ci];var position=card.getAttribute('data-position-identifier')||'';var rk='';try{var kd=JSON.parse(card.getAttribute('data-roster-position-key')||'{}');rk=kd.RosterIdentifier||''}catch(e){}var re=card.querySelector('.Position_Key_RosterIdentifier_Cell_Value .WorkType,.Position_Key_RosterIdentifier_Cell_Value');var roster=re?re.textContent.trim():rk;var txt=card.textContent;var wm=txt.match(/Working:\\s*(\\d+h\\d+)/);var pm=txt.match(/Paid:\\s*(\\d+h\\d+)/);var em=txt.match(/Extra:\\s*(Eligible|Not eligible)/i);var qm=txt.match(/Qualif[.:]?\\s*(Yes|No)/i);var dm=txt.match(/Duty\\s*type:\\s*([A-Z][A-Z0-9,\\s]*?)(?=\\s*(?:\\n|Mon|Tue|Holiday|$))/i);var hm=txt.match(/Holidays?\\s*([\\d\\/]+(?:\\s*,\\s*[\\d\\/]+)*)/);var holidays={};if(hm){hm[1].split(/\\s*,\\s*/).forEach(function(p){var x=p.match(/(\\d{2})\\/(\\d{2})/);if(x)holidays['2026'+x[1]+x[2]]=''})}var days={};var dg=card.querySelectorAll('[class*=DayWrapper],[class*=Day_Group],[class*=day]');if(dg.length>=7){for(var i=0;i<Math.min(dg.length,7);i++){var dt=dg[i].textContent.trim();var dy='';for(var j=0;j<dn.length;j++)if(dt.indexOf(dn[j])>-1){dy=dn[j];break}if(!dy&&i<7)dy=dn[i];var cm=dt.match(/\\b(\\d{1,4}|OFF|SR|VR)\\b/i);var cr=cm?cm[1].toUpperCase():'';var io=cr==='OFF';var vm=dt.match(/Vehicle\\s*Type:\\s*(\\d+)/i);if(dy)days[dy]={crew:cr,is_off:io,vehicle:io?'':(vm?vm[1]:'')}}}if(Object.keys(days).length<7){for(var i=0;i<dn.length;i++){if(days[dn[i]])continue;var rx=new RegExp(dn[i]+'\\\\s*\\\\n?\\\\s*(\\\\d{1,4}|OFF|SR|VR)','i');var m=txt.match(rx);if(m){var c=m[1].toUpperCase();var io=c==='OFF';var af=txt.substring(txt.indexOf(m[0])+m[0].length);var vm=af.match(/Vehicle\\s*Type:\\s*(\\d+)/i);days[dn[i]]={crew:c,is_off:io,vehicle:io?'':(vm?vm[1]:'')}}}}if(Object.keys(days).length<7){var spans=card.querySelectorAll('.WorkType,[class*=Cell_Value] span');var cv=[];spans.forEach(function(sp){var t=sp.textContent.trim();if(/^(\\d{1,4}|OFF|SR|VR)$/i.test(t)&&t!==position&&t.length<=4)cv.push(t.toUpperCase())});if(cv.length>=7)for(var i=0;i<7;i++)if(!days[dn[i]]){var c=cv[i];days[dn[i]]={crew:c,is_off:c==='OFF',vehicle:''}}}shifts.push({position:position,roster:roster,working:wm?wm[1]:'',paid:pm?pm[1]:'',duty_type:dm?dm[1].replace(/\\s+/g,'').trim():'',eligible:em?em[1]:'',qualified:qm?qm[1]:'',days:days,holidays:holidays})}var json=JSON.stringify(shifts,null,2);var rosters={};shifts.forEach(function(s){rosters[s.roster]=(rosters[s.roster]||0)+1});navigator.clipboard.writeText(json).then(function(){ov.style.background='linear-gradient(135deg,#16a34a,#15803d)';ov.innerHTML='\\u2705 <b>'+shifts.length+'</b> positions scraped \\u2192 JSON copied to clipboard! '+Object.entries(rosters).map(function(e){return e[0]+': '+e[1]}).join(' \\u00b7 ')+' <span onclick=\"this.parentElement.remove()\" style=\"cursor:pointer;margin-left:16px;background:rgba(255,255,255,.2);padding:4px 12px;border-radius:6px;font-size:12px\">\\u2715 Close</span>';console.log('[Scraper] Done! JSON is in your clipboard.',shifts.length);console.table(rosters)}).catch(function(){ov.style.background='linear-gradient(135deg,#b45309,#92400e)';ov.innerHTML='\\u26a0\\ufe0f Clipboard blocked. JSON logged to console \u2014 copy from there. <span onclick=\"this.parentElement.remove()\" style=\"cursor:pointer;margin-left:12px;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:6px\">\\u2715</span>';console.log('[Scraper] JSON output (copy from here):');console.log(json)})})();`;
 
-function copyScript() {
-  navigator.clipboard.writeText(SCRAPER).then(function() {
-    var btn = document.getElementById('copyBtn');
+// ── Tampermonkey auto-select script ─────────────────────────────────────────
+const TAMPERMONKEY = `// ==UserScript==
+// @name         CP Hastus Auto-Select Shifts
+// @namespace    cp-shift-tools
+// @version      1.5
+// @description  Auto-select your chosen shifts on the Hastus portal — by Gurjinder Singh
+// @match        https://*/*
+// @grant        GM_setClipboard
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  let chosenIds = [];
+  let delay = 800;
+  let minimized = false;
+
+  function buildUI() {
+    if (document.getElementById('cp-auto-box')) return;
+    const box = document.createElement('div');
+    box.id = 'cp-auto-box';
+    box.style.cssText = \`
+      position:fixed; right:16px; bottom:16px; z-index:99999;
+      background:#1e3a8a; color:#fff; padding:10px 14px;
+      border-radius:12px; box-shadow:0 6px 24px rgba(0,0,0,.35);
+      font-family:sans-serif; font-size:13px; width:270px;
+    \`;
+    box.innerHTML = \`
+      <div id="cp-header" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:700;font-size:13px;">🚌 CP Auto-Select v1.5</span>
+        <div style="display:flex;gap:4px;">
+          <button id="cp-min-btn" title="Minimise" style="background:rgba(255,255,255,0.15);border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:13px;">—</button>
+          <button id="cp-close-btn" title="Close" style="background:#ef4444;border:none;color:#fff;border-radius:4px;padding:2px 7px;cursor:pointer;font-size:13px;">✕</button>
+        </div>
+      </div>
+      <div id="cp-body">
+        <textarea id="cp-ids-input" placeholder="Paste your chosen position IDs&#10;One per line&#10;10257&#10;10439"
+          style="width:100%;height:80px;border-radius:6px;border:none;padding:6px;font-size:12px;resize:vertical;color:#111;box-sizing:border-box;"></textarea>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          <button id="cp-start-btn" style="flex:1;padding:7px;background:#22c55e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">▶ Start</button>
+          <button id="cp-stop-btn" style="flex:1;padding:7px;background:#ef4444;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">■ Stop</button>
+          <button id="cp-copy-btn" style="flex:1;padding:7px;background:#0ea5e9;color:#fff;border:none;border-radius:6px;cursor:pointer;font-weight:700;">📋 Copy IDs</button>
+        </div>
+        <div id="cp-status" style="margin-top:8px;font-size:12px;min-height:18px;color:#bbf7d0;word-break:break-all;">Ready</div>
+        <div style="margin-top:6px;font-size:11px;color:#93c5fd;">
+          Delay (ms): <input id="cp-delay-input" type="number" value="800" min="300"
+            style="width:60px;padding:2px 4px;border-radius:4px;border:none;color:#111;">
+          <button id="cp-debug-btn" style="margin-left:8px;padding:3px 8px;background:#374151;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:11px;">🔍 Debug</button>
+        </div>
+      </div>
+    \`;
+    document.body.appendChild(box);
+
+    document.getElementById('cp-start-btn').onclick = startAutoSelect;
+    document.getElementById('cp-stop-btn').onclick = stopAutoSelect;
+    document.getElementById('cp-copy-btn').onclick = copyVisibleIds;
+    document.getElementById('cp-debug-btn').onclick = debugRows;
+    document.getElementById('cp-delay-input').oninput = e => delay = parseInt(e.target.value) || 800;
+
+    document.getElementById('cp-min-btn').onclick = function() {
+      minimized = !minimized;
+      document.getElementById('cp-body').style.display = minimized ? 'none' : 'block';
+      box.style.width = minimized ? 'auto' : '270px';
+      this.textContent = minimized ? '＋' : '—';
+    };
+
+    document.getElementById('cp-close-btn').onclick = function() { box.remove(); };
+
+    makeDraggable(box, document.getElementById('cp-header'));
+  }
+
+  function makeDraggable(el, handle) {
+    let ox=0, oy=0, mx=0, my=0;
+    handle.style.cursor = 'move';
+    handle.onmousedown = function(e) {
+      e.preventDefault();
+      mx = e.clientX; my = e.clientY;
+      document.onmousemove = function(e) {
+        ox = mx - e.clientX; oy = my - e.clientY;
+        mx = e.clientX; my = e.clientY;
+        el.style.top = (el.offsetTop - oy) + 'px';
+        el.style.left = (el.offsetLeft - ox) + 'px';
+        el.style.right = 'auto'; el.style.bottom = 'auto';
+      };
+      document.onmouseup = function() {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    };
+  }
+
+  function cleanId(text) {
+    return (text || '').replace(/\\s+/g, '').replace(/\\u00a0/g, '').trim();
+  }
+
+  function getAllEntities() {
+    return Array.from(document.querySelectorAll('.ListEntity[data-position-identifier]'));
+  }
+
+  function getPositionId(entity) {
+    return cleanId(entity.getAttribute('data-position-identifier') || '');
+  }
+
+  function getAddButton(entity) {
+    return entity.querySelector('.AddButton');
+  }
+
+  function copyVisibleIds() {
+    setStatus('⏳ Scrolling to collect all IDs...');
+    collectAllIds(function(unique) {
+      GM_setClipboard(unique.join('\\n'), 'text');
+      setStatus('📋 Copied ' + unique.length + ' IDs: ' + unique.slice(0,3).join(', ') + '...');
+    });
+  }
+
+  function collectAllIds(callback) {
+    var allIds = new Set();
+    var container = document.querySelector('.ListBody, .AvailableRosterPositionList, [class*="ListBody"]');
+    if (!container) {
+      getAllEntities().forEach(function(e) { allIds.add(getPositionId(e)); });
+      callback([...allIds].filter(Boolean));
+      return;
+    }
+    var lastCount = 0, tries = 0;
+    function scrollAndCollect() {
+      getAllEntities().forEach(function(e) { allIds.add(getPositionId(e)); });
+      container.scrollTop += 3000;
+      tries++;
+      var newCount = allIds.size;
+      if ((newCount === lastCount && tries > 3) || tries > 30) {
+        container.scrollTop = 0;
+        callback([...allIds].filter(Boolean));
+        return;
+      }
+      lastCount = newCount;
+      setStatus('⏳ Collecting... ' + allIds.size + ' IDs (scroll ' + tries + ')');
+      setTimeout(scrollAndCollect, 600);
+    }
+    scrollAndCollect();
+  }
+
+  function debugRows() {
+    const entities = getAllEntities();
+    const ids = entities.map(getPositionId).filter(Boolean);
+    const firstBtn = entities[0] ? getAddButton(entities[0]) : null;
+    setStatus('🔍 ' + entities.length + ' rows: ' + ids.slice(0,4).join(', ') + ' | AddBtn: ' + (firstBtn ? '✅' : '❌'));
+    console.log('[CP v1.5] IDs:', ids);
+  }
+
+  let running = false, queue = [], successCount = 0, missCount = 0;
+
+  function setStatus(msg) {
+    const el = document.getElementById('cp-status');
+    if (el) el.textContent = msg;
+  }
+
+  function startAutoSelect() {
+    const raw = (document.getElementById('cp-ids-input').value || '').trim();
+    if (!raw) { setStatus('⚠️ Paste IDs first'); return; }
+    chosenIds = raw.split('\\n').map(x => cleanId(x)).filter(Boolean);
+    queue = [...chosenIds]; successCount = 0; missCount = 0; running = true;
+    setStatus('🔄 Starting ' + queue.length + ' selections...');
+    processNext();
+  }
+
+  function stopAutoSelect() {
+    running = false; queue = [];
+    setStatus('⛔ Stopped. Done: ' + successCount + ' | Missed: ' + missCount);
+  }
+
+  function processNext() {
+    if (!running || queue.length === 0) {
+      if (running) setStatus('✅ Done! Selected: ' + successCount + ' | Not found: ' + missCount);
+      running = false; return;
+    }
+    const targetId = queue.shift();
+    const entity = document.querySelector('.ListEntity[data-position-identifier="' + targetId + '"]');
+    if (entity) {
+      const btn = getAddButton(entity);
+      if (btn) {
+        btn.click(); successCount++;
+        setStatus('✅ Clicked ' + targetId + ' (' + successCount + '/' + chosenIds.length + ' done)');
+      } else {
+        setStatus('⚠️ ' + targetId + ' found but no AddButton'); missCount++;
+      }
+    } else {
+      missCount++;
+      setStatus('⚠️ ' + targetId + ' not on page (' + missCount + ' missed)');
+    }
+    setTimeout(processNext, delay);
+  }
+
+  buildUI();
+  const observer = new MutationObserver(() => buildUI());
+  observer.observe(document.body, { childList: true, subtree: false });
+
+})();`;
+
+document.getElementById('codeBox1').textContent = SCRAPER_DOWNLOAD;
+document.getElementById('codeBox2').textContent = SCRAPER_CLIPBOARD;
+document.getElementById('codeBox3').textContent = TAMPERMONKEY;
+
+function switchMode(mode) {
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector('.' + mode + '-tab').classList.add('active');
+  document.getElementById('panel-' + mode).classList.add('active');
+}
+
+function copyScript(mode) {
+  const scripts = { download: SCRAPER_DOWNLOAD, clipboard: SCRAPER_CLIPBOARD, tamper: TAMPERMONKEY };
+  const btnIds  = { download: 'copyBtn', clipboard: 'copyBtnClip', tamper: 'copyBtnTM' };
+  const labels  = { download: '📋 Copy Scraper to Clipboard', clipboard: '📎 Copy Clipboard Scraper', tamper: '🐵 Copy Tampermonkey Script' };
+  const btn = document.getElementById(btnIds[mode]);
+  navigator.clipboard.writeText(scripts[mode]).then(function() {
     btn.classList.add('done');
-    btn.innerHTML = '✅ Copied! Now paste in HASTUS Console';
-    var toast = document.getElementById('toast');
-    toast.classList.add('show');
-    setTimeout(function() { toast.classList.remove('show'); }, 2500);
-    setTimeout(function() { btn.classList.remove('done'); btn.innerHTML = '📋 Copy Scraper to Clipboard'; }, 5000);
+    btn.textContent = '✅ Copied! ' + (mode === 'tamper' ? 'Paste into Tampermonkey' : 'Now paste in HASTUS Console');
+    if (mode === 'clipboard') document.getElementById('resultBox').classList.add('show');
+    showToast('✅ Copied to clipboard!');
+    setTimeout(function() { btn.classList.remove('done'); btn.textContent = labels[mode]; }, 5000);
   });
 }
 
-function toggleCode() {
-  var box = document.getElementById('codeBox');
-  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function toggleCode(id) {
+  var b = document.getElementById(id);
+  b.style.display = (b.style.display === 'block') ? 'none' : 'block';
+}
+
+function copyResultJson() {
+  var val = document.getElementById('jsonPasteArea').value.trim();
+  if (!val) { showToast('⚠️ Nothing to copy yet!'); return; }
+  navigator.clipboard.writeText(val).then(() => showToast('✅ JSON copied!'));
 }
 </script>
 </body>
