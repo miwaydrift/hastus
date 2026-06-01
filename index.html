@@ -70,7 +70,7 @@
   <p class="byline">by Gurjinder Singh</p>
 
   <div class="mode-tabs">
-    <button class="mode-tab download-tab active" onclick="switchMode('download')">⬇️ Download JSON</button>
+    <button class="mode-tab download-tab active" onclick="switchMode('download')">⬇️ Download JSON(PC)</button>
     <button class="mode-tab clipboard-tab" onclick="switchMode('clipboard')">📎 Clipboard <span class="badge new">ALT</span></button>
     <button class="mode-tab tamper-tab" onclick="switchMode('tamper')">🐵 Auto-Select</button>
   </div>
@@ -78,11 +78,12 @@
   <!-- ── Tab 1: Download ── -->
   <div class="mode-panel active" id="panel-download">
     <div class="steps">
-      <b>1.</b> Open HASTUS "Available work" page in Edge<br>
+      <b>1.</b> Open HASTUS "Available work" page in Browser<br>
       <b>2.</b> Click the button below to copy the scraper<br>
       <b>3.</b> Press <b>F12</b> → Console tab<br>
       <b>4.</b> Paste (<b>Ctrl+V</b>) and hit <b>Enter</b><br>
       <b>5.</b> Wait for green bar → JSON downloads automatically
+      <b>6.</b> Click the 'Import JSON' button on the sign-up page and paste/upload your downloaded file<br>
     </div>
     <button class="big-btn blue" id="copyBtn" onclick="copyScript('download')">
       📋 Copy Scraper to Clipboard
@@ -99,18 +100,18 @@
   <!-- ── Tab 2: Clipboard ── -->
   <div class="mode-panel" id="panel-clipboard">
     <div class="steps purple">
-      <b>1.</b> Open HASTUS "Available work" page in Edge<br>
+      <b>1.</b> Open HASTUS "Available work" page in Browser<br>
       <b>2.</b> Click the button below to copy the scraper<br>
       <b>3.</b> Press <b>F12</b> → Console tab<br>
       <b>4.</b> Paste (<b>Ctrl+V</b>) and hit <b>Enter</b><br>
-      <b>5.</b> Green bar appears → <b>come back here</b> and paste the JSON below
+      <b>5.</b> Copy the message from the console and paste it on the Sign-up page in the Import HASTUS button
     </div>
     <button class="big-btn purple" id="copyBtnClip" onclick="copyScript('clipboard')">
       📎 Copy Clipboard Scraper
     </button>
     <div class="result-box" id="resultBox">
-      <div class="result-label">📦 Paste your JSON result here:</div>
-      <textarea id="jsonPasteArea" placeholder="Paste the JSON output from the console here (Ctrl+V)..."></textarea>
+      <div class="result-label">📦</div>
+      <textarea id="jsonPasteArea" placeholder="p"></textarea>
       <button class="copy-result-btn" onclick="copyResultJson()">📋 Copy JSON to clipboard</button>
     </div>
     <span class="toggle-code" onclick="toggleCode('codeBox2')">▶ Show/hide scraper code</span>
