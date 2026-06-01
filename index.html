@@ -67,12 +67,12 @@
 
 <div class="card">
   <h1>🚌 HASTUS Scraper Tools</h1>
-  <p class="byline">by Gurjinder Singh</p>
+  <p class="byline" id="byline" onclick="handleBylineTap()" style="cursor:pointer; user-select:none;">by Gurjinder Singh</p>
 
   <div class="mode-tabs">
     <button class="mode-tab download-tab active" onclick="switchMode('download')">⬇️ Download JSON(PC)</button>
     <button class="mode-tab clipboard-tab" onclick="switchMode('clipboard')">📎 Miway Computers<span class="badge new">ALT</span></button>
-    <button class="mode-tab tamper-tab" onclick="switchMode('tamper')">🐵 Auto-Select</button>
+    <button class="mode-tab tamper-tab" id="tamper-tab" onclick="switchMode('tamper')" style="display:none;">🐵 Auto-Select</button>
   </div>
 
   <!-- ── Tab 1: Download ── -->
@@ -354,6 +354,41 @@ const TAMPERMONKEY = `// ==UserScript==
 document.getElementById('codeBox1').textContent = SCRAPER_DOWNLOAD;
 document.getElementById('codeBox2').textContent = SCRAPER_CLIPBOARD;
 document.getElementById('codeBox3').textContent = TAMPERMONKEY;
+
+// ── Byline easter egg: 5 taps to reveal Auto-Select ──────────────────────────
+var bylineTapCount = 0;
+var bylineTapTimer = null;
+
+function handleBylineTap() {
+  bylineTapCount++;
+  clearTimeout(bylineTapTimer);
+
+  var remaining = 5 - bylineTapCount;
+
+  if (bylineTapCount >= 5) {
+    bylineTapCount = 0;
+    var tab = document.getElementById('tamper-tab');
+    var alreadyVisible = tab.style.display !== 'none';
+    if (!alreadyVisible) {
+      tab.style.display = '';
+      showToast('🐵 Auto-Select unlocked!');
+      document.getElementById('byline').style.color = '#fb923c';
+    } else {
+      tab.style.display = 'none';
+      // If currently on tamper panel, switch to download
+      if (document.getElementById('panel-tamper').classList.contains('active')) {
+        switchMode('download');
+      }
+      showToast('🔒 Auto-Select hidden');
+      document.getElementById('byline').style.color = '';
+    }
+  } else {
+    if (remaining === 1) {
+      showToast('🔓 One more tap...');
+    }
+    bylineTapTimer = setTimeout(function() { bylineTapCount = 0; }, 2000);
+  }
+}
 
 function switchMode(mode) {
   document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
